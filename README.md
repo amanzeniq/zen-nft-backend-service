@@ -1,6 +1,6 @@
 # ZEN NFT BACKEND SERVICE
 
-Backend to register events
+Backend service to track Transfer events on multiple smart contracts and also contains endpoints to get data like wallet tokens and tokens transaction history.
 
 # Install Dependencies
 
