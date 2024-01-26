@@ -4,6 +4,7 @@ const nftSchema = new mongoose.Schema({
   nftId: { type: String, required: true },
   owner: { type: String, required: true },
   contractAddress: { type: String, required: true },
+  tokenUri: { type: String, default: null },
   lastTx: { type: String, required: true },
   timestamp: { type: String, required: true },
 });

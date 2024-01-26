@@ -1,6 +1,7 @@
 import NFT from "../models/nftSchema.js";
 import TransactionHistory from "../models/transactionHistorySchema.js";
 import Web3 from "web3";
+import zennftAbi from "../abis/zennftAbi.json" assert { type: "json" };
 
 const NODE_URL = process.env.NODE_URL;
 const RECONNECT_DELAY = 5000;
@@ -102,9 +103,14 @@ const updateNFT = async (
     nftId: tokenId,
   });
   if (!existingNft || existingNft.timestamp < timestamp) {
+    const contract = new web3.eth.Contract(zennftAbi.abi, contractAddress);
+    const tokenURI = (await contract.methods.tokenURI(tokenId).call())
+      ? await contract.methods.tokenURI(tokenId).call()
+      : null;
+
     await NFT.findOneAndUpdate(
       { contractAddress: contractAddress, nftId: tokenId },
-      { $set: { owner: to, lastTx: txHash, timestamp } },
+      { $set: { owner: to, tokenUri: tokenURI, lastTx: txHash, timestamp } },
       { upsert: true, new: true }
     );
   }
