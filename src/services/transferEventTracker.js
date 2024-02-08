@@ -136,6 +136,8 @@ const saveTransactionHistory = async (
       nftId: tokenId,
       txHash,
       contractAddress: contractAddress,
+      sender: from,
+      receiver: to,
       txType: txType,
       timestamp,
     });
