@@ -3,6 +3,7 @@ import apiResponse from "../utils/apiResponse.js";
 import httpCodes from "../constants/httpCodes.js";
 import logger from "../logger/winston.js";
 import { addressSchema } from "../validators/addressValidation.js";
+import Web3 from 'web3';
 
 // Fetch all NFTs
 export const getAllNFTs = async (req, res) => {
@@ -31,10 +32,11 @@ export const getNFTsByOwner = async (req, res) => {
   }
 
   try {
-    const nfts = await NFT.find({ owner: ownerAddress }, { __v: 0 }).sort({
+    const checksumAddress = Web3.utils.toChecksumAddress(ownerAddress);
+    const nfts = await NFT.find({ owner: checksumAddress }, { __v: 0 }).sort({
       timestamp: 1,
     }); // Exclude the __v field
-    logger.info(`NFTs owned by ${ownerAddress} fetched successfully`);
+    logger.info(`NFTs owned by ${checksumAddress} fetched successfully`);
     return res.status(httpCodes.OK).json(apiResponse({ data: nfts }));
   } catch (error) {
     logger.error(error.message);
@@ -66,14 +68,17 @@ export const getNFTsByOwnerAndContract = async (req, res) => {
   }
 
   try {
+    const checksumOwnerAddress = Web3.utils.toChecksumAddress(ownerAddress);
+    const checksumContractAddress = Web3.utils.toChecksumAddress(contractAddress);
+
     const nfts = await NFT.find(
-      { owner: ownerAddress, contractAddress: contractAddress },
+      { owner: checksumOwnerAddress, contractAddress: checksumContractAddress },
       { __v: 0 }
     ).sort({
       timestamp: 1,
     }); // Exclude the __v field
     logger.info(
-      `NFTs owned by ${ownerAddress} on token ${contractAddress} fetched successfully`
+      `NFTs owned by ${checksumOwnerAddress} on token ${checksumContractAddress} fetched successfully`
     );
     return res.status(httpCodes.OK).json(apiResponse({ data: nfts }));
   } catch (error) {
