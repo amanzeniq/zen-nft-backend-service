@@ -16,7 +16,7 @@ export const getTxHistoryByTokenId = async (req, res) => {
       nftId: tokenId,
     })
       .select("-__v")
-      .sort({ timestamp: 1 });
+      .sort({ timestamp: -1 });
 
     logger.info(
       `Transaction history for token ${tokenId} fetched successfully`

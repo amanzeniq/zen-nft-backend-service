@@ -58,7 +58,7 @@ const processLog = async (log) => {
     // Decode log data and process
     const { tokenId, from, to, contractAddress, txHash, timestamp } =
       await decodeLogData(log);
-    await updateNFT(tokenId, from, to, contractAddress, txHash, timestamp);
+    await updateNFT(Number(tokenId), from, to, contractAddress, txHash, timestamp);
     await saveTransactionHistory(
       tokenId,
       txHash,
@@ -109,7 +109,7 @@ const updateNFT = async (
       : null;
 
     await NFT.findOneAndUpdate(
-      { contractAddress: contractAddress, nftId: tokenId },
+      { contractAddress: contractAddress, nftId: Number(tokenId) },
       { $set: { owner: to, tokenUri: tokenURI, lastTx: txHash, timestamp } },
       { upsert: true, new: true }
     );
@@ -133,7 +133,7 @@ const saveTransactionHistory = async (
   const existingTransaction = await TransactionHistory.findOne({ txHash });
   if (!existingTransaction) {
     const transactionHistory = new TransactionHistory({
-      nftId: tokenId,
+      nftId: Number(tokenId),
       txHash,
       contractAddress: contractAddress,
       sender: from,
